@@ -17,6 +17,7 @@
 
 /* Needed to initialize the port Clock and CAN Clock */
 #define PORT_ClOCK_REGISTER           (*((volatile uint32 *)0x400FE608))
+#define CAN_ClOCK_REGISTER            (*((volatile uint32 *)0x400FE634))
 
 /* Needed GPIO Registers for CAN pins Initialization */
 /* Base Address of GPIO PORTS using APB Bus */
