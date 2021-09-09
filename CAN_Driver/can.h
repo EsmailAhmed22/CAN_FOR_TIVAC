@@ -16,24 +16,32 @@
 #include "Std_Types.h"
 #include "Common_Macros.h"
 #include "Compiler.h"
-
 /*******************************************************************************
 *****************************PREPRPCESSOR MACROS********************************
 *******************************************************************************/
-#define PORTA_ID						(0U)
-#define PORTB_ID						(1U)
-#define PORTE_ID						(4U)
-#define PORTF_ID						(5U)
-#define CAN_PMC_1						(3U)
-#define CAN_PMC_2						(8U)
-#define SHIFT_FACTOR  			(4U)
-#define UNLOCK_VALUE  			(0x4C4F434B)
-#define INIT_BIT						(0U)
-#define CFG_EN_BIT					(6U)
-#define PRESCALER_CLEAR 		(0xFFFFFF10)
-#define INTERFACE_RAM_BIT	  (7U)
-#define NUMBER_OF_MESSAGES  (32U)
-#define MESSAGE_ID_OFFSET		(1U)
+#define PORTA_ID											 (0U)
+#define PORTB_ID											 (1U)
+#define PORTE_ID											 (4U)
+#define PORTF_ID											 (5U)
+#define CAN_PMC_1											 (3U)
+#define CAN_PMC_2											 (8U)
+#define SHIFT_FACTOR  								 (4U)
+#define UNLOCK_VALUE  								 (0x4C4F434B)
+#define INIT_BIT										 	 (0U)
+#define CFG_EN_BIT										 (6U)
+#define PRESCALER_CLEAR 							 (0xFFFFFF10)
+#define INTERFACE_RAM_BIT	  					 (7U)
+#define NUMBER_OF_MESSAGES  					 (32U)
+#define MESSAGE_EXT_BIT								 (14U)
+#define MESSAGE_EXT_FILTER_ENABLE_BIT	 (15U)
+#define MESSAGE_TYPE_BIT							 (13U)
+#define MESSAGE_TYPE_FILTER_ENABLE_BIT (14U)
+#define MESSAGE_VALID_BIT							 (15U)
+#define MESSAGE_REMOTE_ENABLE_BIT			 (9U)
+#define MESSAGE_FILTERING_ENABLE			 (12U)
+#define MESSAGE_TRANSMIT_REQUEST			 (2U)
+#define TRANSMISSION_BUSY_BIT					 (15U)
+#define ONE_MESSAGE_BUFFER_BIT				 (7U)
 /*******************************************************************************
 ****************************TYPES DECLARATION***********************************
 *******************************************************************************/
@@ -45,46 +53,33 @@ typedef enum{
 	PF0=0 , PA0=0 , PA1=1 , PF3=3 , PB4=4 , PE4=4 , PB5=5 , PE5=5
 }PIN_ID;
 typedef enum{
-	ONE_BYTE = 1,TWO_BYTES,THREE_BYTES,FOUR_BYTES,FIVE_BYTES,SIX_BYTES,SEVEM_BYTES,EIGHT_BYTES
+	REMOTE_FRAME,ONE_BYTE,TWO_BYTES,THREE_BYTES,FOUR_BYTES,FIVE_BYTES,SIX_BYTES,SEVEM_BYTES,EIGHT_BYTES
 }DATA_SIZE;
+typedef enum{
+	RECEIVE , TRANSMIT
+}MESSAGE_TYPE;
 /* Message Structure Configuration */
 typedef struct{
-	/* Transfer IDMASK + DIR + MXTD of the message object into the Interface registers or not. */
-	uint8 access_mask_bits;
-	/* Transfer ID + DIR + XTD + MSGVAL of the message object into the Interface registers or not.*/
-	uint8 access_arbit_bits;
-	/* Transfer the control bits into the interface registers. */
-	uint8 access_control_bits;
-	/* Data Transmission request between message buffer and interface.*/
-	uint8 new_data_request;
-	/* Transmit the bytes(0,1,2,3) between message object and interface.*/
-	uint8 data_0_to_3_bytes;
-	/* Transmit the bytes(4,5,6,7) between message object and interface.*/
-	uint8 data_4_to_7_bytes;
-	/*The extended bit is used for acceptance filtering or not. */
-	uint8 extender_acceptance;
-	/*The direction bit is used for acceptance filtering or not. */
-	uint8 direction_acceptance;
-	/* 11-bit ID identifier value*/
-	uint16 id_acceptance;
-	/* Extention of 11-bit ID identifier value*/
-	uint16 id_ext_acceptance;
-	/* The message id */
-	uint16 id;
-	/* The message id ext*/
-	uint16 id_ext;
-	/* Specify if message is valid or ignored */
-	uint8 message_validity;
-	/* Id ext enable*/
-	uint8 id_ext_enable;
-	/* Direction of the ID is transmitted or received*/
-	uint8 direction;
-	/* Enable Acceptance filtering */
-	uint8 acceptance_enable;
-	/* Automatic transmission enable */
-	uint8 auto_trans_enable;
-	/* Number of Data Bytes*/
-	uint8 data_bytes;
+	/* ID extender enable */
+	uint8 message_id_ext_enable;
+	/* ID extender filter enable */
+	uint8 message_id_ext_filter_enable;
+	/* Message direction */
+	uint8 message_type;
+	/* Messge direction filter enable */
+	uint8 message_type_filter_enable;
+	/* ID of the message */
+	uint32 message_id;
+	/* ID mask filtering*/
+	uint32 message_id_filter;
+	/* Message validity */
+	uint8 message_valid;
+	/* Message Remote frame enable*/
+	uint8 message_remote_enable;
+	/* Message filtering Enable*/
+	uint8 message_filter_enable;
+	/* Data size of the payload*/
+	uint8 message_payload;
 	
 }CAN_Message_Config;
 /* Configureation structure passed to the init function */
